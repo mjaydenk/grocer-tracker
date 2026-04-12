@@ -2,7 +2,7 @@ export type GroceryItem = {
   id: string
   name: string
   prices: GroceryPrice[]
-  tags: GroceyTags[]
+  tags: GroceryTag[]
 }
 
 export type GroceryPrice = {
@@ -15,7 +15,7 @@ export type GroceryMarket = {
   name: string
 }
 
-export type GroceyTags = {
+export type GroceryTag = {
   id: string
   name: string
 }
