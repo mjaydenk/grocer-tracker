@@ -17,23 +17,20 @@ import {
   TableHeader,
   TableRow,
 } from "#/components/ui/table";
+import { EditGroceryItemDialog } from "#/components/edit-grocery-item-dialog";
 import {
   getGroceryTableData,
   groceryItems,
   groceryTableQueryKey,
 } from "#/lib/idb/grocery-crud";
+import {
+  blockNegativePriceKeyDown,
+  parseGroceryPriceField,
+} from "#/lib/parse-grocery-price";
 import { cn } from "#/lib/utils";
 import type { GroceryMarket, GroceryPrice } from "#/types/groceries";
 import type { GroceryItemDto } from "#/types/groceriesDto";
 import type { ColumnDef } from "@tanstack/react-table";
-
-function parsePriceInput(raw: string): number | null {
-  const trimmed = raw.trim();
-  if (!trimmed) return null;
-  const n = Number.parseFloat(trimmed.replace(",", "."));
-  if (Number.isNaN(n) || n < 0) return null;
-  return n;
-}
 
 function AddGroceryItemForm({
   markets,
@@ -45,22 +42,28 @@ function AddGroceryItemForm({
   const queryClient = useQueryClient();
   const [name, setName] = useState("");
   const [priceInputs, setPriceInputs] = useState<Record<string, string>>({});
+  const [priceError, setPriceError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   async function onSubmit() {
     const trimmed = name.trim();
     if (!trimmed || submitting) return;
 
+    setPriceError(null);
+    const prices: GroceryPrice[] = [];
+    for (const m of markets) {
+      const r = parseGroceryPriceField(priceInputs[m.id] ?? "");
+      if (r.kind === "invalid") {
+        setPriceError(r.message);
+        return;
+      }
+      if (r.kind === "valid") {
+        prices.push({ marketId: m.id, price: r.value });
+      }
+    }
+
     setSubmitting(true);
     try {
-      const prices: GroceryPrice[] = [];
-      for (const m of markets) {
-        const parsed = parsePriceInput(priceInputs[m.id] ?? "");
-        if (parsed !== null) {
-          prices.push({ marketId: m.id, price: parsed });
-        }
-      }
-
       await groceryItems.put({
         id: crypto.randomUUID(),
         name: trimmed,
@@ -130,12 +133,14 @@ function AddGroceryItemForm({
                 id={`price-${m.id}`}
                 name={`price-${m.id}`}
                 value={priceInputs[m.id] ?? ""}
-                onChange={(e) =>
+                onChange={(e) => {
+                  setPriceError(null);
                   setPriceInputs((prev) => ({
                     ...prev,
                     [m.id]: e.target.value,
-                  }))
-                }
+                  }));
+                }}
+                onKeyDown={blockNegativePriceKeyDown}
                 placeholder="0.00"
                 inputMode="decimal"
                 autoComplete="off"
@@ -152,6 +157,11 @@ function AddGroceryItemForm({
           {submitting ? "Saving…" : "Add"}
         </Button>
       </div>
+      {priceError ? (
+        <p className="text-destructive text-sm" role="alert">
+          {priceError}
+        </p>
+      ) : null}
     </form>
   );
 }
@@ -197,6 +207,7 @@ function formatPrice(value: number): string {
 
 export function GroceryPricesTable({ className }: { className?: string }) {
   const queryClient = useQueryClient();
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const { data, isPending, isError, error } = useQuery({
     queryKey: groceryTableQueryKey,
     queryFn: getGroceryTableData,
@@ -226,9 +237,7 @@ export function GroceryPricesTable({ className }: { className?: string }) {
           size="icon-sm"
           className="text-muted-foreground hover:text-foreground"
           aria-label={`Edit ${row.original.name}`}
-          onClick={() => {
-            /* edit flow coming soon */
-          }}
+          onClick={() => setEditingItemId(row.original.id)}
         >
           <Pencil className="size-4" />
         </Button>
@@ -288,6 +297,14 @@ export function GroceryPricesTable({ className }: { className?: string }) {
       )}
     >
       <AddGroceryItemForm markets={markets} disabled={isPending || isError} />
+      <EditGroceryItemDialog
+        open={editingItemId !== null}
+        onOpenChange={(next) => {
+          if (!next) setEditingItemId(null);
+        }}
+        itemId={editingItemId}
+        markets={markets}
+      />
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-border bg-card">
         <div className="min-h-0 flex-1 overflow-auto">
           <Table>
