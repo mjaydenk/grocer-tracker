@@ -6,7 +6,7 @@ export const Route = createFileRoute('/about')({
 
 function About() {
   return (
-    <main className="page-wrap flex min-h-0 flex-1 flex-col px-4 py-8 sm:py-10">
+    <main className="page-wrap flex min-h-0 flex-1 flex-col overflow-y-auto px-4 py-8 sm:py-10">
       <section className="island-shell rounded-2xl p-6 sm:p-8">
         <p className="island-kicker mb-2">About</p>
         <h1 className="display-title mb-4 text-4xl font-bold text-[var(--sea-ink)] sm:text-5xl">

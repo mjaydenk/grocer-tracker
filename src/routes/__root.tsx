@@ -53,24 +53,26 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
       </head>
-      <body className="flex min-h-screen flex-col font-sans antialiased wrap-anywhere selection:bg-[rgba(79,184,178,0.24)]">
+      <body className="flex h-dvh max-h-dvh flex-col overflow-hidden font-sans antialiased wrap-anywhere selection:bg-[rgba(79,184,178,0.24)]">
         <TooltipProvider>
           <Header />
           <Toaster />
           <div className="flex min-h-0 flex-1 flex-col">{children}</div>
           <Footer />
-          <TanStackDevtools
-            config={{
-              position: "bottom-right",
-            }}
-            plugins={[
-              {
-                name: "Tanstack Router",
-                render: <TanStackRouterDevtoolsPanel />,
-              },
-              TanStackQueryDevtools,
-            ]}
-          />
+          {import.meta.env.DEV && (
+            <TanStackDevtools
+              config={{
+                position: "bottom-right",
+              }}
+              plugins={[
+                {
+                  name: "Tanstack Router",
+                  render: <TanStackRouterDevtoolsPanel />,
+                },
+                TanStackQueryDevtools,
+              ]}
+            />
+          )}
           <Scripts />
         </TooltipProvider>
       </body>
