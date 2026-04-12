@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/about')({
   component: About,
@@ -10,21 +10,65 @@ function About() {
       <section className="island-shell rounded-2xl p-6 sm:p-8">
         <p className="island-kicker mb-2">About</p>
         <h1 className="display-title mb-4 text-4xl font-bold text-[var(--sea-ink)] sm:text-5xl">
-          Compare grocery prices across supermarkets
+          Grocery Price Comparer
         </h1>
-        <div className="max-w-3xl space-y-4 text-base leading-relaxed text-[var(--sea-ink-soft)]">
+        <div className="max-w-3xl space-y-6 text-base leading-relaxed text-[var(--sea-ink-soft)]">
           <p className="m-0">
             <strong className="font-semibold text-[var(--sea-ink)]">
               Grocery Price Comparer
             </strong>{' '}
-            helps you see how the same groceries are priced at different
-            supermarkets, so you can spot better deals and plan your shop with
-            clearer numbers.
+            is a simple tool to record and compare prices for the same groceries
+            across different stores. You build your own list of items, attach
+            prices per store, and scan the table to see where things cost less.
           </p>
+
+          <div>
+            <h2 className="mb-3 text-lg font-semibold text-[var(--sea-ink)]">
+              What you can do
+            </h2>
+            <ul className="m-0 list-disc space-y-2 pl-5">
+              <li>
+                Add and edit grocery items, with optional tags to group similar
+                products.
+              </li>
+              <li>
+                Define the markets (supermarkets or shops) you care about in
+                settings.
+              </li>
+              <li>
+                Enter each item&apos;s price at each market and compare them in
+                one place.
+              </li>
+              <li>
+                Open settings from the header to manage markets, tags, and
+                related options.
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="mb-3 text-lg font-semibold text-[var(--sea-ink)]">
+              Your data stays on this device
+            </h2>
+            <p className="m-0">
+              Nothing is uploaded to a server. Items, markets, and tags are
+              stored in{' '}
+              <strong className="font-semibold text-[var(--sea-ink)]">
+                IndexedDB
+              </strong>{' '}
+              in your browser. There is no sign-in and no sync—clearing site data
+              for this app will remove your list, so export or back up anything
+              you need to keep.
+            </p>
+          </div>
+
           <p className="m-0">
-            Add items you buy often, compare prices from multiple stores in one
-            place, and use the app as a lightweight reference when deciding where
-            to buy—or what to swap when another chain is cheaper.
+            <Link
+              to="/"
+              className="font-medium text-[var(--lagoon-deep)] underline decoration-[var(--lagoon)] underline-offset-2 transition-colors hover:text-[var(--sea-ink)]"
+            >
+              Back to the price table
+            </Link>
           </p>
         </div>
       </section>
