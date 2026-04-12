@@ -9,11 +9,54 @@ import type {
   GroceryMarket,
   GroceryTag,
 } from '#/types/groceries'
+import type { GroceryItemDto } from '#/types/groceriesDto'
+
+export const groceryTableQueryKey = ['grocery-table'] as const
+
+function mapToGroceryItemDtos(
+  items: GroceryItem[],
+  markets: GroceryMarket[],
+): GroceryItemDto[] {
+  const marketNameById = new Map(markets.map((m) => [m.id, m.name]))
+  return items.map((item) => ({
+    id: item.id,
+    name: item.name,
+    prices: item.prices.map((p) => ({
+      marketId: p.marketId,
+      marketName: marketNameById.get(p.marketId) ?? 'Unknown',
+      price: p.price,
+    })),
+    tags: item.tags.map((t) => t.name),
+  }))
+}
+
+/**
+ * Loads grocery items as DTOs (with market names) and all markets in one DB round trip.
+ */
+export async function getGroceryTableData(): Promise<{
+  items: GroceryItemDto[]
+  markets: GroceryMarket[]
+}> {
+  const db = await openGrocerDB()
+  const [rawItems, markets] = await Promise.all([
+    db.getAll(GROCERY_ITEMS_STORE),
+    db.getAll(GROCERY_MARKETS_STORE),
+  ])
+  return {
+    items: mapToGroceryItemDtos(rawItems, markets),
+    markets,
+  }
+}
 
 export const groceryItems = {
   async list(): Promise<GroceryItem[]> {
     const db = await openGrocerDB()
     return db.getAll(GROCERY_ITEMS_STORE)
+  },
+
+  async listDto(): Promise<GroceryItemDto[]> {
+    const { items } = await getGroceryTableData()
+    return items
   },
 
   async get(id: string): Promise<GroceryItem | undefined> {
