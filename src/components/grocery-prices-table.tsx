@@ -2,7 +2,6 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
-  type ColumnDef,
 } from '@tanstack/react-table'
 import {
   Table,
@@ -13,6 +12,7 @@ import {
   TableRow,
 } from '#/components/ui/table'
 import { cn } from '#/lib/utils'
+import type { ColumnDef } from '@tanstack/react-table'
 
 export type GroceryPriceRow = {
   id: string
@@ -41,11 +41,7 @@ const columns: ColumnDef<GroceryPriceRow>[] = [
   },
 ]
 
-export function GroceryPricesTable({
-  className,
-}: {
-  className?: string
-}) {
+export function GroceryPricesTable({ className }: { className?: string }) {
   const data: GroceryPriceRow[] = []
 
   const table = useReactTable({
