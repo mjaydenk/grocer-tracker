@@ -1,8 +1,8 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/about')({
+export const Route = createFileRoute("/about")({
   component: About,
-})
+});
 
 function About() {
   return (
@@ -16,7 +16,7 @@ function About() {
           <p className="m-0">
             <strong className="font-semibold text-[var(--sea-ink)]">
               Grocery Price Comparer
-            </strong>{' '}
+            </strong>{" "}
             is a simple tool to record and compare prices for the same groceries
             across different stores. You build your own list of items, attach
             prices per store, and scan the table to see where things cost less.
@@ -27,10 +27,7 @@ function About() {
               What you can do
             </h2>
             <ul className="m-0 list-disc space-y-2 pl-5">
-              <li>
-                Add and edit grocery items, with optional tags to group similar
-                products.
-              </li>
+              <li>Add and edit grocery items (tags are coming soon).</li>
               <li>
                 Define the markets (supermarkets or shops) you care about in
                 settings.
@@ -40,8 +37,8 @@ function About() {
                 one place.
               </li>
               <li>
-                Open settings from the header to manage markets, tags, and
-                related options.
+                Open settings from the header to manage markets and related
+                options while tag support is still coming soon.
               </li>
             </ul>
           </div>
@@ -51,20 +48,21 @@ function About() {
               Your data stays on this device
             </h2>
             <p className="m-0">
-              Nothing is uploaded to a server. Items, markets, and tags are
-              stored in{' '}
+              Nothing is uploaded to a server. Items and markets are stored in
+              your browser cache ({" "}
               <strong className="font-semibold text-[var(--sea-ink)]">
                 IndexedDB
-              </strong>{' '}
-              in your browser. There is no sign-in and no sync—clearing site data
-              for this app will remove your list, so export or back up anything
-              you need to keep.
+              </strong>{" "}
+              ). There is no sign-in and no sync, and clearing site data for
+              this app will remove your list. Exporting is coming soon, so for
+              now make sure to back up anything you need to keep.
             </p>
           </div>
 
           <p className="m-0">
             <Link
               to="/"
+              search={{ options: false }}
               className="font-medium text-[var(--lagoon-deep)] underline decoration-[var(--lagoon)] underline-offset-2 transition-colors hover:text-[var(--sea-ink)]"
             >
               Back to the price table
@@ -73,5 +71,5 @@ function About() {
         </div>
       </section>
     </main>
-  )
+  );
 }
