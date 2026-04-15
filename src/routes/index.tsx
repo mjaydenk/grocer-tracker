@@ -9,6 +9,7 @@ export const Route = createFileRoute("/")({
       options: search.options === true ? true : undefined,
     };
   },
+  ssr: false,
 });
 
 function App() {
