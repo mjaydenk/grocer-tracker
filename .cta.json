@@ -8,14 +8,8 @@
   "addOnOptions": {},
   "envVarValues": {},
   "git": true,
-  "routerOnly": false,
+  "routerOnly": true,
   "version": 1,
   "framework": "react",
-  "chosenAddOns": [
-    "eslint",
-    "db",
-    "shadcn",
-    "compiler",
-    "tanstack-query"
-  ]
+  "chosenAddOns": ["eslint"]
 }

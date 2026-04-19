@@ -1,8 +1,9 @@
-import { useForm } from "@tanstack/react-form";
-import { Pencil, Trash2 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useForm } from '@tanstack/react-form'
+import { useQueryClient } from '@tanstack/react-query'
+import { Pencil, Trash2 } from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
 
-import { Button } from "#/components/ui/button";
+import { Button } from '#/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -10,32 +11,36 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "#/components/ui/dialog";
+} from '#/components/ui/dialog'
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
-} from "#/components/ui/field";
-import { Input } from "#/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
+} from '#/components/ui/field'
+import { Input } from '#/components/ui/input'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '#/components/ui/tabs'
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "#/components/ui/tooltip";
-import { groceryMarkets, groceryTags } from "#/lib/idb/grocery-crud";
-import { cn } from "#/lib/utils";
-import type { GroceryMarket, GroceryTag } from "#/types/groceries";
+} from '#/components/ui/tooltip'
+import {
+  groceryMarkets,
+  groceryTableQueryKey,
+  groceryTags,
+} from '#/lib/idb/grocery-crud'
+import { cn } from '#/lib/utils'
+import type { GroceryMarket, GroceryTag } from '#/types/groceries'
 
 function sortByName<T extends { name: string }>(items: T[]): T[] {
-  return [...items].sort((a, b) => a.name.localeCompare(b.name));
+  return [...items].sort((a, b) => a.name.localeCompare(b.name))
 }
 
 function ComingSoonEditButton() {
   return (
     <Tooltip>
-      <TooltipTrigger asChild>
+      <TooltipTrigger>
         <span className="inline-flex" tabIndex={0}>
           <Button type="button" variant="outline" size="icon-sm" disabled>
             <Pencil className="size-4" />
@@ -45,35 +50,37 @@ function ComingSoonEditButton() {
       </TooltipTrigger>
       <TooltipContent>coming soon</TooltipContent>
     </Tooltip>
-  );
+  )
 }
 
 function SupermarketPanel({
   markets,
   onRefresh,
 }: {
-  markets: GroceryMarket[];
-  onRefresh: () => Promise<void>;
+  markets: GroceryMarket[]
+  onRefresh: () => Promise<void>
 }) {
+  const queryClient = useQueryClient()
   const form = useForm({
-    defaultValues: { name: "" },
+    defaultValues: { name: '' },
     onSubmit: async ({ value }) => {
-      const name = value.name.trim();
-      if (!name) return;
-      await groceryMarkets.put({ id: crypto.randomUUID(), name });
-      form.reset();
-      await onRefresh();
+      const name = value.name.trim()
+      if (!name) return
+      await groceryMarkets.put({ id: crypto.randomUUID(), name })
+      await queryClient.invalidateQueries({ queryKey: groceryTableQueryKey })
+      form.reset()
+      await onRefresh()
     },
-  });
+  })
 
   return (
     <div className="flex flex-col gap-6">
       <form
         className="flex flex-col gap-4"
         onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          void form.handleSubmit();
+          e.preventDefault()
+          e.stopPropagation()
+          void form.handleSubmit()
         }}
       >
         <FieldGroup className="gap-4">
@@ -81,7 +88,7 @@ function SupermarketPanel({
             name="name"
             validators={{
               onSubmit: ({ value }) =>
-                value.trim() ? undefined : "Name is required",
+                value.trim() ? undefined : 'Name is required',
             }}
             children={(field) => (
               <Field
@@ -112,7 +119,7 @@ function SupermarketPanel({
           selector={(state) => [state.canSubmit, state.isSubmitting] as const}
           children={([canSubmit, isSubmitting]) => (
             <Button type="submit" disabled={!canSubmit || isSubmitting}>
-              {isSubmitting ? "Adding…" : "Add supermarket"}
+              {isSubmitting ? 'Adding…' : 'Add supermarket'}
             </Button>
           )}
         />
@@ -140,8 +147,8 @@ function SupermarketPanel({
                     size="icon-sm"
                     className="text-destructive hover:text-destructive"
                     onClick={async () => {
-                      await groceryMarkets.delete(m.id);
-                      await onRefresh();
+                      await groceryMarkets.delete(m.id)
+                      await onRefresh()
                     }}
                   >
                     <Trash2 className="size-4" />
@@ -154,35 +161,35 @@ function SupermarketPanel({
         </ul>
       </div>
     </div>
-  );
+  )
 }
 
 function TagsPanel({
   tags,
   onRefresh,
 }: {
-  tags: GroceryTag[];
-  onRefresh: () => Promise<void>;
+  tags: GroceryTag[]
+  onRefresh: () => Promise<void>
 }) {
   const form = useForm({
-    defaultValues: { name: "" },
+    defaultValues: { name: '' },
     onSubmit: async ({ value }) => {
-      const name = value.name.trim();
-      if (!name) return;
-      await groceryTags.put({ id: crypto.randomUUID(), name });
-      form.reset();
-      await onRefresh();
+      const name = value.name.trim()
+      if (!name) return
+      await groceryTags.put({ id: crypto.randomUUID(), name })
+      form.reset()
+      await onRefresh()
     },
-  });
+  })
 
   return (
     <div className="flex flex-col gap-6">
       <form
         className="flex flex-col gap-4"
         onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          void form.handleSubmit();
+          e.preventDefault()
+          e.stopPropagation()
+          void form.handleSubmit()
         }}
       >
         <FieldGroup className="gap-4">
@@ -190,7 +197,7 @@ function TagsPanel({
             name="name"
             validators={{
               onSubmit: ({ value }) =>
-                value.trim() ? undefined : "Name is required",
+                value.trim() ? undefined : 'Name is required',
             }}
             children={(field) => (
               <Field
@@ -221,7 +228,7 @@ function TagsPanel({
           selector={(state) => [state.canSubmit, state.isSubmitting] as const}
           children={([canSubmit, isSubmitting]) => (
             <Button type="submit" disabled={!canSubmit || isSubmitting}>
-              {isSubmitting ? "Adding…" : "Add tag"}
+              {isSubmitting ? 'Adding…' : 'Add tag'}
             </Button>
           )}
         />
@@ -249,8 +256,8 @@ function TagsPanel({
                     size="icon-sm"
                     className="text-destructive hover:text-destructive"
                     onClick={async () => {
-                      await groceryTags.delete(t.id);
-                      await onRefresh();
+                      await groceryTags.delete(t.id)
+                      await onRefresh()
                     }}
                   >
                     <Trash2 className="size-4" />
@@ -263,7 +270,7 @@ function TagsPanel({
         </ul>
       </div>
     </div>
-  );
+  )
 }
 
 export function SettingsDialog({
@@ -271,40 +278,38 @@ export function SettingsDialog({
   onOpenChange,
   children,
 }: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  children?: React.ReactNode;
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  children?: React.ReactNode
 }) {
-  const [markets, setMarkets] = useState<GroceryMarket[]>([]);
-  const [tags, setTags] = useState<GroceryTag[]>([]);
+  const [markets, setMarkets] = useState<GroceryMarket[]>([])
+  const [tags, setTags] = useState<GroceryTag[]>([])
 
   const refreshMarkets = useCallback(async () => {
-    const list = await groceryMarkets.list();
-    setMarkets(sortByName(list));
-  }, []);
+    const list = await groceryMarkets.list()
+    setMarkets(sortByName(list))
+  }, [])
 
   const refreshTags = useCallback(async () => {
-    const list = await groceryTags.list();
-    setTags(sortByName(list));
-  }, []);
+    const list = await groceryTags.list()
+    setTags(sortByName(list))
+  }, [])
 
   const refreshAll = useCallback(async () => {
-    await Promise.all([refreshMarkets(), refreshTags()]);
-  }, [refreshMarkets, refreshTags]);
+    await Promise.all([refreshMarkets(), refreshTags()])
+  }, [refreshMarkets, refreshTags])
 
   useEffect(() => {
-    if (open) void refreshAll();
-  }, [open, refreshAll]);
+    if (open) void refreshAll()
+  }, [open, refreshAll])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      {children != null ? (
-        <DialogTrigger asChild>{children}</DialogTrigger>
-      ) : null}
+      {children != null ? <DialogTrigger>{children}</DialogTrigger> : null}
       <DialogContent
         showCloseButton
         className={cn(
-          "flex max-h-[min(90vh,40rem)] flex-col gap-0 sm:max-w-2xl",
+          'flex max-h-[min(90vh,40rem)] flex-col gap-0 sm:max-w-2xl',
         )}
       >
         <DialogHeader>
@@ -322,7 +327,7 @@ export function SettingsDialog({
           <TabsList className="h-fit w-40 shrink-0 flex-col">
             <TabsTrigger value="supermarket">Supermarket</TabsTrigger>
             <Tooltip>
-              <TooltipTrigger asChild>
+              <TooltipTrigger>
                 <TabsTrigger value="tags" disabled>
                   Tags - coming soon
                 </TabsTrigger>
@@ -345,5 +350,5 @@ export function SettingsDialog({
         </Tabs>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

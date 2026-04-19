@@ -1,9 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link } from '@tanstack/react-router'
 
-export const Route = createFileRoute("/about")({
+export const Route = createFileRoute('/about')({
   component: About,
   ssr: false,
-});
+})
 
 function About() {
   return (
@@ -17,7 +17,7 @@ function About() {
           <p className="m-0">
             <strong className="font-semibold text-[var(--sea-ink)]">
               Grocery Price Comparer
-            </strong>{" "}
+            </strong>{' '}
             is a simple tool to record and compare prices for the same groceries
             across different stores. You build your own list of items, attach
             prices per store, and scan the table to see where things cost less.
@@ -50,10 +50,10 @@ function About() {
             </h2>
             <p className="m-0">
               Nothing is uploaded to a server. Items and markets are stored in
-              your browser cache ({" "}
+              your browser cache ({' '}
               <strong className="font-semibold text-[var(--sea-ink)]">
                 IndexedDB
-              </strong>{" "}
+              </strong>{' '}
               ). There is no sign-in and no sync, and clearing site data for
               this app will remove your list. Exporting is coming soon, so for
               now make sure to back up anything you need to keep.
@@ -72,5 +72,5 @@ function About() {
         </div>
       </section>
     </main>
-  );
+  )
 }

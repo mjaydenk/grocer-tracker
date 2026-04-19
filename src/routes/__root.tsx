@@ -1,81 +1,41 @@
-import {
-  HeadContent,
-  Scripts,
-  createRootRouteWithContext,
-} from "@tanstack/react-router"
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
-import { TanStackDevtools } from "@tanstack/react-devtools"
-import Footer from "../components/Footer"
-import Header from "../components/Header"
+import { Outlet, createRootRoute } from '@tanstack/react-router'
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+import { TanStackDevtools } from '@tanstack/react-devtools'
 
-import TanStackQueryDevtools from "../integrations/tanstack-query/devtools"
+import '../styles.css'
+import { TooltipProvider } from '#/components/ui/tooltip'
+import { Toaster } from 'sonner'
+import Header from '#/components/Header'
+import Footer from '#/components/Footer'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-import appCss from "../styles.css?url"
-
-import type { QueryClient } from "@tanstack/react-query"
-import { Toaster } from "sonner"
-import { TooltipProvider } from "#/components/ui/tooltip"
-
-interface MyRouterContext {
-  queryClient: QueryClient
-}
-
-const THEME_INIT_SCRIPT = `(function(){try{var stored=window.localStorage.getItem('theme');var mode=(stored==='light'||stored==='dark'||stored==='auto')?stored:'auto';var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;var resolved=mode==='auto'?(prefersDark?'dark':'light'):mode;var root=document.documentElement;root.classList.remove('light','dark');root.classList.add(resolved);if(mode==='auto'){root.removeAttribute('data-theme')}else{root.setAttribute('data-theme',mode)}root.style.colorScheme=resolved;}catch(e){}})();`
-
-export const Route = createRootRouteWithContext<MyRouterContext>()({
-  head: () => ({
-    meta: [
-      {
-        charSet: "utf-8",
-      },
-      {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1",
-      },
-      {
-        title: "Grocery Price Comparer",
-      },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-    ],
-  }),
-  shellComponent: RootDocument,
+export const Route = createRootRoute({
+  component: RootComponent,
 })
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+function RootComponent() {
+  const queryClient = new QueryClient()
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
-        <HeadContent />
-      </head>
-      <body className="flex h-dvh max-h-dvh flex-col overflow-hidden font-sans antialiased wrap-anywhere selection:bg-[rgba(79,184,178,0.24)]">
-        <TooltipProvider>
+    <TooltipProvider>
+      <QueryClientProvider client={queryClient}>
+        <Toaster />
+        <div className="flex min-h-screen flex-col">
           <Header />
-          <Toaster />
-          <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+          <Outlet />
           <Footer />
-          {import.meta.env.DEV && (
-            <TanStackDevtools
-              config={{
-                position: "bottom-right",
-              }}
-              plugins={[
-                {
-                  name: "Tanstack Router",
-                  render: <TanStackRouterDevtoolsPanel />,
-                },
-                TanStackQueryDevtools,
-              ]}
-            />
-          )}
-          <Scripts />
-        </TooltipProvider>
-      </body>
-    </html>
+        </div>
+        <TanStackDevtools
+          config={{
+            position: 'bottom-right',
+          }}
+          plugins={[
+            {
+              name: 'TanStack Router',
+              render: <TanStackRouterDevtoolsPanel />,
+            },
+          ]}
+        />
+      </QueryClientProvider>
+    </TooltipProvider>
   )
 }

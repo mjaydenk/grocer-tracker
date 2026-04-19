@@ -1,10 +1,10 @@
-import { Settings } from "lucide-react";
-import { Button } from "#/components/ui/button";
-import ThemeToggle from "./ThemeToggle";
-import { useRouter } from "@tanstack/react-router";
+import { Settings } from 'lucide-react'
+import { Button } from '#/components/ui/button'
+import ThemeToggle from './ThemeToggle'
+import { useRouter } from '@tanstack/react-router'
 
 export default function Header() {
-  const router = useRouter();
+  const router = useRouter()
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--header-bg)] backdrop-blur-lg">
       <nav className="relative flex min-h-14 items-center justify-between px-4 py-2 sm:min-h-16 sm:px-6">
@@ -16,7 +16,7 @@ export default function Header() {
             aria-label="Settings"
             className="text-[var(--sea-ink)]"
             onClick={() =>
-              router.navigate({ to: "/", search: { options: true } })
+              router.navigate({ to: '/', search: { options: true } })
             }
           >
             <Settings className="size-5" />
@@ -32,5 +32,5 @@ export default function Header() {
         </div>
       </nav>
     </header>
-  );
+  )
 }
