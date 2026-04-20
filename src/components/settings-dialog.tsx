@@ -73,6 +73,8 @@ function SupermarketPanel({
     },
   })
 
+  // test sync change
+
   return (
     <div className="flex flex-col gap-6">
       <form
